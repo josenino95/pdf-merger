@@ -1,0 +1,18 @@
+PDF Merger - Conversation Prompts
+==================================
+
+Prompt 1:
+---------
+Create a new git repo called 'pdf-merger' that has a single html file with a self-contained application. The app allows the user to upload multiple pdf files and then merges all the uploaded pdfs into a single pdf. Finally, the user would be able to download the merged pdf.
+
+Prompt 2:
+---------
+Ok, so for you to configure my git user, please use as name "Jose Nino Muriel" and as email "jdninom@unal.edu.co"
+
+Prompt 3:
+---------
+Add functionality so the user can reorder the uploaded pdf files. Also, when I click "Merge PDFs", I get an error "Error merging PDFs: pdf.getPageIndex is not a function"
+
+Prompt 4:
+---------
+please export the prompts I have used in this conversation, including this one, to a .txt file inside the pdf-merger repo, and add a commit to the repo
