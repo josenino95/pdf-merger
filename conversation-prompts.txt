@@ -1,18 +1,105 @@
-PDF Merger - Conversation Prompts
-==================================
+PDF Merger - Conversation Prompts and Responses
+===============================================
 
 Prompt 1:
 ---------
 Create a new git repo called 'pdf-merger' that has a single html file with a self-contained application. The app allows the user to upload multiple pdf files and then merges all the uploaded pdfs into a single pdf. Finally, the user would be able to download the merged pdf.
 
+[Response: Code implementation - see index.html]
+
+
 Prompt 2:
 ---------
 Ok, so for you to configure my git user, please use as name "Jose Nino Muriel" and as email "jdninom@unal.edu.co"
+
+[Response: Git configuration completed]
+
 
 Prompt 3:
 ---------
 Add functionality so the user can reorder the uploaded pdf files. Also, when I click "Merge PDFs", I get an error "Error merging PDFs: pdf.getPageIndex is not a function"
 
+[Response: Code updates completed - added reordering UI with up/down buttons and fixed the PDF merging error by using pdf.getPageCount() instead of pdf.getPageIndex()]
+
+
 Prompt 4:
 ---------
 please export the prompts I have used in this conversation, including this one, to a .txt file inside the pdf-merger repo, and add a commit to the repo
+
+[Response: File created and committed]
+
+
+Q&A Session 1: Safety and Security
+-----------------------------------
+
+User Question:
+How can I know the tool you built is safe? How can I know it's not sending my files over the internet to malicious agents?
+
+Response:
+Great question! Here's how you can verify the tool is safe:
+
+1. All code is client-side and visible
+   - The entire application is a single HTML file that you can read and inspect
+   - There are no hidden backend servers - everything runs in your browser
+   - You can read every line of JavaScript code directly in `index.html`
+
+2. No file uploads
+   - PDFs are never sent anywhere - they exist only in your browser's memory
+   - The `file.arrayBuffer()` call reads the file from your local disk into browser RAM
+   - The merged PDF is created in-memory and downloaded directly to your computer
+
+3. Verify network traffic
+   You can check this yourself:
+   - Open the PDF Merger in your browser
+   - Open your browser's Developer Tools (F12)
+   - Go to the Network tab
+   - Upload and merge PDFs
+   - You'll see only requests to load the page and `pdf-lib` library from the CDN - no requests sending your files anywhere
+
+4. The only external dependency is pdf-lib
+   - `pdf-lib` is loaded from CDN: `https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js`
+   - This is a well-known, open-source JavaScript library for PDF manipulation
+   - It's purely for PDF processing logic, not for data transmission
+
+5. To be extra cautious, you could:
+   - Disconnect your internet after the page loads, then use the app offline
+   - Or, download the `pdf-lib` library locally and modify the HTML to load it locally instead of from CDN
+
+The application has zero capability to transmit files because there's literally no code that makes HTTP POST requests or sends data anywhere. It only downloads data from the internet (the library), never uploads.
+
+
+Q&A Session 2: GitHub Pages Deployment
+---------------------------------------
+
+User Question:
+How can I serve my little app from github pages so I can use it online?
+
+Response:
+Here's how to deploy your PDF Merger to GitHub Pages:
+
+1. Create a GitHub repository
+   Go to https://github.com/new and create a new public repository called `pdf-merger`
+
+2. Add the GitHub remote to your local repo
+   ```bash
+   git remote add origin https://github.com/YOUR_USERNAME/pdf-merger.git
+   git branch -M main
+   git push -u origin main
+   ```
+   Replace `YOUR_USERNAME` with your actual GitHub username.
+
+3. Enable GitHub Pages
+   - Go to your repository on GitHub
+   - Click **Settings** (top right)
+   - Scroll down to **Pages** section
+   - Under "Build and deployment":
+     - Source: select **Deploy from a branch**
+     - Branch: select **main** and **/root** folder
+     - Click **Save**
+
+4. Access your app
+   Your app will be available at: `https://YOUR_USERNAME.github.io/pdf-merger/`
+
+That's it! GitHub Pages will automatically serve your `index.html` file. Since it's a self-contained HTML file with no backend dependencies, it works perfectly on GitHub Pages.
+
+Note: If you want it at the root of your GitHub Pages site instead (like `https://YOUR_USERNAME.github.io/`), you'd need to rename the repo to `YOUR_USERNAME.github.io` instead of `pdf-merger`.
