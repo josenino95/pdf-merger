@@ -104,6 +104,7 @@
             border-radius: 6px;
             margin-bottom: 8px;
             font-size: 14px;
+            gap: 8px;
         }
 
         .file-name {
@@ -115,7 +116,33 @@
         .file-size {
             color: #999;
             font-size: 12px;
-            margin-left: 10px;
+        }
+
+        .file-controls {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .move-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.2s;
+            min-width: 28px;
+        }
+
+        .move-btn:hover {
+            background: #764ba2;
+        }
+
+        .move-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
         }
 
         .remove-btn {
@@ -126,7 +153,6 @@
             padding: 4px 8px;
             cursor: pointer;
             font-size: 12px;
-            margin-left: 10px;
             transition: background 0.2s;
         }
 
@@ -322,9 +348,13 @@
                 mergeBtn.disabled = false;
                 fileList.innerHTML = selectedFiles.map((file, index) => `
                     <div class="file-item">
-                        <span class="file-name">${file.name}</span>
+                        <span class="file-name">${index + 1}. ${file.name}</span>
                         <span class="file-size">${(file.size / 1024 / 1024).toFixed(2)} MB</span>
-                        <button class="remove-btn" onclick="removeFile(${index})">Remove</button>
+                        <div class="file-controls">
+                            <button class="move-btn" onclick="moveFile(${index}, -1)" ${index === 0 ? 'disabled' : ''} title="Move up">↑</button>
+                            <button class="move-btn" onclick="moveFile(${index}, 1)" ${index === selectedFiles.length - 1 ? 'disabled' : ''} title="Move down">↓</button>
+                            <button class="remove-btn" onclick="removeFile(${index})">Remove</button>
+                        </div>
                     </div>
                 `).join('');
             }
@@ -334,6 +364,15 @@
         window.removeFile = function(index) {
             selectedFiles.splice(index, 1);
             updateFileList();
+        };
+
+        // Move file up or down
+        window.moveFile = function(index, direction) {
+            const newIndex = index + direction;
+            if (newIndex >= 0 && newIndex < selectedFiles.length) {
+                [selectedFiles[index], selectedFiles[newIndex]] = [selectedFiles[newIndex], selectedFiles[index]];
+                updateFileList();
+            }
         };
 
         // Clear all files
@@ -362,10 +401,10 @@
                 for (const file of selectedFiles) {
                     const arrayBuffer = await file.arrayBuffer();
                     const pdf = await PDFDocument.load(arrayBuffer);
-                    const pages = pdf.getPages();
+                    const pageCount = pdf.getPageCount();
 
-                    for (const page of pages) {
-                        const [copiedPage] = await mergedPdf.copyPages(pdf, [pdf.getPageIndex(page)]);
+                    for (let i = 0; i < pageCount; i++) {
+                        const [copiedPage] = await mergedPdf.copyPages(pdf, [i]);
                         mergedPdf.addPage(copiedPage);
                     }
                 }
